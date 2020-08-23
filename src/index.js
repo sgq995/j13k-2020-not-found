@@ -6,19 +6,16 @@ const GAME_WIDTH = 640
 const GAME_HEIGHT = 480;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const bkCanvas = document.getElementById('bk-canvas');
-    bkCanvas.width = GAME_WIDTH;
-    bkCanvas.height = GAME_HEIGHT;
-
     const aspectRatio = GAME_WIDTH / GAME_HEIGHT;
 
-    const fgCanvas = document.getElementById('fg-canvas');
-    const fgContext = fgCanvas.getContext('2d');
-    fgContext.mozImageSmoothingEnabled = false;
-    fgContext.webkitImageSmoothingEnabled = false;
-    fgContext.msImageSmoothingEnabled = false;
-    fgContext.imageSmoothingEnabled = false;
-    const setForegroundCanvasDimensions = () => {
+    const canvas = document.getElementById('game-canvas');
+    canvas.width = GAME_WIDTH;
+    canvas.height = GAME_HEIGHT;
+
+    const setCanvasDimensions = () => {
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+
         let width = window.innerWidth;
         let height = window.innerHeight;
 
@@ -28,43 +25,23 @@ document.addEventListener('DOMContentLoaded', () => {
             width = aspectRatio * height;
         }
 
-        fgCanvas.width = width;
-        fgCanvas.height = height;
+        canvas.style.width = `${width / windowWidth * 100}%`;
+        canvas.style.height = `${height / windowHeight * 100}%`;
     };
-    setForegroundCanvasDimensions();
 
     // Init
-    init('bk-canvas');
+    setCanvasDimensions();
+    const { context } = init(canvas);
     initKeys();
     initPointer();
 
+    context.mozImageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.msImageSmoothingEnabled = false;
+    context.imageSmoothingEnabled = false;
+
     window.addEventListener('resize', () => {
-        setForegroundCanvasDimensions();
-    });
-
-    fgCanvas.addEventListener('mousedown', function (e) {
-        
-    });
-    fgCanvas.addEventListener('touchstart', function (e) {
-
-    });
-    fgCanvas.addEventListener('mouseup', function () {
-
-    });
-    fgCanvas.addEventListener('touchend', function () {
-
-    });
-    fgCanvas.addEventListener('touchcancel', function () {
-
-    });
-    fgCanvas.addEventListener('blur', function (e) {
-        
-    });
-    fgCanvas.addEventListener('mousemove', function () {
-
-    });
-    fgCanvas.addEventListener('touchmove', function () {
-
+        setCanvasDimensions();
     });
 
     // Game
@@ -77,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
         anchor: { x: 0.5, y: 0.5 },
         textAlign: 'center',
 
-        onOver: function() {
+        onOver: function () {
             this.color = 'red';
         },
 
-        onOut: function() {
+        onOut: function () {
             this.color = 'white';
         },
     });
@@ -94,11 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
         width: 20,
         height: 40,
 
-        onOver: function() {
+        onOver: function () {
             this.color = 'white';
         },
 
-        onOut: function() {
+        onOut: function () {
             this.color = 'red';
         },
     });
@@ -136,9 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
             scene.render();
 
             text.render();
-
-            fgContext.clearRect(0, 0, fgCanvas.width, fgCanvas.height);
-            fgContext.drawImage(bkCanvas, 0, 0, fgCanvas.width, fgCanvas.height);
         },
     });
     loop.start();
